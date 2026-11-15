@@ -40,6 +40,10 @@
       <div class="entry-head"><h2 id="entry-title">Nuevo gasto</h2><span aria-hidden="true">＋</span></div>
       <output id="amount" aria-label="Importe">0,00 €</output>
       <div id="categories" class="categories" role="group" aria-label="Categoría"></div>
+      <div class="entry-fields">
+        <label>Nombre <span>(opcional)</span><input id="expense-name" maxlength="32" placeholder="P. ej. Regalo" autocomplete="off" enterkeyhint="done"></label>
+        <label>Más categorías<select id="more-categories"></select></label>
+      </div>
       <div class="keypad" id="keypad" role="group" aria-label="Teclado numérico"></div>
       <button class="add" id="add" type="button">Añadir gasto <span aria-hidden="true">↗</span></button>
     </section>
@@ -48,6 +52,10 @@
     <div class="section-head"><h1>Historial</h1><input type="month" id="past-month" aria-label="Consultar otro mes"></div>
     <div class="periods" id="periods" role="group" aria-label="Periodo">
       <button data-period="today">Hoy</button><button data-period="week">Esta semana</button><button data-period="month" aria-pressed="true">Este mes</button>
+    </div>
+    <div class="history-filters">
+      <label>Buscar por nombre<input id="history-search" type="search" placeholder="P. ej. Regalo"></label>
+      <label>Categoría<select id="history-category"></select></label>
     </div>
     <div class="history-grid">
       <article class="panel"><h2>Por categoría</h2><p class="history-total" id="history-total"></p><div id="breakdown"></div></article>

@@ -6,8 +6,16 @@ const currencies = ['€', '$', '£', 'CHF', 'MXN', 'USD'];
 const categories = [
   { icon: '☕', label: 'Café/Bar' }, { icon: '🍔', label: 'Comida' },
   { icon: '🛍️', label: 'Capricho' }, { icon: '🚕', label: 'Transporte' },
-  { icon: '📦', label: 'Otro' }
+  { icon: '📦', label: 'Otro' },
+  { icon: '🛒', label: 'Supermercado' }, { icon: '🏠', label: 'Hogar' },
+  { icon: '💊', label: 'Salud' }, { icon: '🎟️', label: 'Ocio' },
+  { icon: '🎁', label: 'Regalos' }, { icon: '👕', label: 'Ropa' },
+  { icon: '📱', label: 'Suscripciones' }, { icon: '📚', label: 'Educación' },
+  { icon: '🐾', label: 'Mascotas' }, { icon: '✈️', label: 'Viajes' },
+  { icon: '💇', label: 'Cuidado personal' }
 ];
+// The first five indices are part of existing local data and backups.
+const quickCategoryCount = 5;
 const defaults = {
   version: 1, limit: 10000, currency: '€', expenses: [],
   shortcuts: [
@@ -195,24 +203,52 @@ for (const value of ['1','2','3','4','5','6','7','8','9',',','0','⌫']) {
   if (value === ',') node.setAttribute('aria-label', 'Coma decimal');
   $('keypad').append(node);
 }
-categories.forEach((category, index) => {
-  const node = button(undefined, () => {
-    selected = index;
-    Array.from($('categories').children).forEach((item, i) => item.setAttribute('aria-pressed', i === selected));
+function categoryOptions(select, start = 0, emptyLabel) {
+  if (emptyLabel) {
+    const empty = el('option', emptyLabel);
+    empty.value = '';
+    select.append(empty);
+  }
+  categories.slice(start).forEach((category, index) => {
+    const option = el('option', category.icon + ' ' + category.label);
+    option.value = String(start + index);
+    select.append(option);
   });
+}
+
+function selectCategory(index) {
+  selected = index;
+  Array.from($('categories').children).forEach((item, i) =>
+    item.setAttribute('aria-pressed', i === selected));
+  $('more-categories').value = selected >= quickCategoryCount ? String(selected) : '';
+}
+
+categories.slice(0, quickCategoryCount).forEach((category, index) => {
+  const node = button(undefined, () => selectCategory(index));
   node.setAttribute('aria-pressed', index === selected);
   node.append(el('span', category.icon), document.createTextNode(category.label));
   $('categories').append(node);
 });
+categoryOptions($('more-categories'), quickCategoryCount, 'Ver opciones');
+$('more-categories').addEventListener('change', event =>
+  selectCategory(event.target.value === '' ? 0 : Number(event.target.value)));
 
 $('add').addEventListener('click', () => {
   const cents = centsOf(input);
   if (!cents) return notify('Introduce un importe mayor que cero.');
   const { icon, label } = categories[selected];
-  if (addExpense({ icon, name: label, cents, category: selected })) {
+  const name = $('expense-name').value.trim() || label;
+  if (addExpense({ icon, name, cents, category: selected })) {
     input = '';
+    $('expense-name').value = '';
     renderAmount();
   }
+});
+$('expense-name').addEventListener('keydown', event => {
+  if (event.key !== 'Enter' || event.isComposing) return;
+  event.preventDefault();
+  $('add').click();
+  if (!$('expense-name').value) $('expense-name').blur();
 });
 
 document.addEventListener('keydown', event => {
@@ -231,10 +267,19 @@ function filterExpenses(now) {
   if (period === 'week') day.setDate(day.getDate() - (day.getDay() + 6) % 7);
   const end = new Date(day);
   end.setDate(end.getDate() + (period === 'week' ? 7 : 1));
+  const query = searchable($('history-search').value.trim());
+  const category = $('history-category').value;
   return state.expenses.filter(item => period === 'month'
     ? localMonth(new Date(item.at)) === (past || localMonth(now))
     : item.at >= day.getTime() && item.at < end.getTime()
+  ).filter(item =>
+    (category === '' || item.category === Number(category)) &&
+    (!query || searchable(item.name).includes(query))
   ).sort((a, b) => b.at - a.at);
+}
+
+function searchable(value) {
+  return value.normalize('NFD').replace(/\p{M}/gu, '').toLocaleLowerCase('es');
 }
 
 function renderHistory() {
@@ -251,8 +296,9 @@ function renderHistory() {
   $('breakdown').replaceChildren();
   $('movements').replaceChildren();
   if (!expenses.length) {
-    $('breakdown').append(el('p', 'El desglose aparecerá al registrar gastos.', 'empty'));
-    $('movements').append(el('p', 'Sin gastos en este periodo.', 'empty'));
+    $('breakdown').append(el('p', 'Sin importes para mostrar.', 'empty'));
+    const filtered = $('history-search').value.trim() || $('history-category').value !== '';
+    $('movements').append(el('p', filtered ? 'Ningún gasto coincide con la búsqueda.' : 'Sin gastos en este periodo.', 'empty'));
     return;
   }
   sums.map((cents, index) => ({ cents, index })).sort((a, b) => b.cents - a.cents).forEach(({ cents, index }) => {
@@ -296,6 +342,9 @@ $('past-month').addEventListener('change', event => {
   past = value === localMonth(new Date()) ? '' : value;
   renderHistory();
 });
+categoryOptions($('history-category'), 0, 'Todas');
+$('history-search').addEventListener('input', renderHistory);
+$('history-category').addEventListener('change', renderHistory);
 
 function field(text, value, maxlength, mode) {
   const label = el('label', text);
@@ -317,7 +366,12 @@ function renderSettings() {
   $('currency').value = state.currency;
   $('shortcut-fields').replaceChildren(...state.shortcuts.map((item, index) => {
     const row = el('div', undefined, 'shortcut-row');
-    row.append(field('Emoji', item.icon, 16), field('Nombre', item.name, 32), field('Importe', editValue(item.cents), 10, 'decimal'));
+    const label = el('label', 'Categoría', 'shortcut-category');
+    const select = el('select');
+    categoryOptions(select);
+    select.value = String(item.category);
+    label.append(select);
+    row.append(field('Emoji', item.icon, 16), field('Nombre', item.name, 32), field('Importe', editValue(item.cents), 10, 'decimal'), label);
     row.setAttribute('role', 'group');
     row.setAttribute('aria-label', 'Gasto habitual ' + (index + 1));
     return row;
@@ -326,9 +380,9 @@ function renderSettings() {
 $('settings-form').addEventListener('submit', event => {
   event.preventDefault();
   const limit = centsOf($('limit').value);
-  const shortcuts = Array.from($('shortcut-fields').children).map((row, index) => {
+  const shortcuts = Array.from($('shortcut-fields').children).map(row => {
     const [icon, name, amount] = Array.from(row.querySelectorAll('input'), input => input.value.trim());
-    return { icon, name, cents: centsOf(amount), category: state.shortcuts[index].category };
+    return { icon, name, cents: centsOf(amount), category: Number(row.querySelector('select').value) };
   });
   if (!validCents(limit) || shortcuts.some(item => !item.icon || !item.name || !validCents(item.cents))) {
     return notify('Revisa los importes, nombres y emojis.');
