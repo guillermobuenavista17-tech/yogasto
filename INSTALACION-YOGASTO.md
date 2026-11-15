@@ -1,6 +1,6 @@
 # Instalar YoGasto en el móvil
 
-Abre [YoGasto](https://guillermobuenavista17-tech.github.io/yogasto/) desde el móvil. El enlace estará disponible cuando se publique GitHub Pages.
+Abre [YoGasto](https://guillermobuenavista17-tech.github.io/yogasto/) desde el móvil.
 
 ## iPhone
 

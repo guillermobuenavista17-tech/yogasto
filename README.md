@@ -1,55 +1,22 @@
 # YoGasto
 
-PWA de registro de pequeños gastos en español. Incluye presupuesto mensual, cuatro gastos habituales editables, teclado propio, historial, CSV y copias JSON. Los datos se guardan en el navegador. Después de la primera carga, se puede abrir sin conexión. Al cambiar la moneda, cambia el símbolo o código mostrado para todos los importes.
+YoGasto es una app para apuntar pequeños gastos diarios y ver cuánto suman a final de mes. Puedes usarla desde el navegador o instalarla en la pantalla de inicio de tu móvil.
 
-## Probar en Fedora
+[Abre YoGasto](https://guillermobuenavista17-tech.github.io/yogasto/) · [Instalación en iPhone y Android](INSTALACION-YOGASTO.md)
 
-Desde la carpeta YoGasto:
+## Registra un gasto
 
-```bash
-python3 -m http.server 8000 --bind 127.0.0.1
-```
+- **Gastos habituales.** Toca Café, Desayuno, Bus/Metro o Refresco para registrar al instante su importe. Si te equivocas, tienes cuatro segundos para pulsar **Deshacer**.
+- **Otros gastos.** Introduce el importe con el teclado de la app, elige una categoría y pulsa **Añadir gasto**.
 
-Abre [YoGasto en el navegador](http://127.0.0.1:8000/).
+## Consulta tu presupuesto e historial
 
-## Publicar en GitHub Pages desde Fedora
+En **Registro** ves cuánto llevas gastado este mes, qué porcentaje del límite has usado y cuánto queda. La barra cambia de verde a ámbar cuando usas el 75 % del presupuesto y a coral cuando llegas al 95 %.
 
-1. Instala Git y la CLI de GitHub. Inicia sesión con tu cuenta de GitHub y elige HTTPS si te pregunta.
+En **Historial** puedes consultar los gastos de hoy, esta semana, este mes o un mes anterior. Verás el total y el desglose por categoría. Para corregir un registro, pulsa **×** junto al movimiento.
 
-   ```bash
-   sudo dnf install git gh
-   gh auth login
-   gh auth setup-git
-   ```
+## Personaliza la app y guarda tus datos
 
-   [Paquete oficial de Fedora](https://packages.fedoraproject.org/pkgs/gh/gh/)
+En **Ajustes** puedes cambiar el límite mensual, la moneda y el nombre, emoji e importe de los cuatro gastos habituales. Cambiar la moneda actualiza cómo se muestran las cantidades, sin conversión de divisas.
 
-2. Crea una carpeta independiente, copia allí la aplicación e inicializa Git. Si Git te pide nombre y correo, configura tu identidad y vuelve a ejecutar el commit.
-
-   ```bash
-   mkdir -p "$HOME/yogasto"
-   cp -a "$HOME/Documentos/ChatGPT/CHATGPT APPSWEB/YoGasto/." "$HOME/yogasto/"
-   cd "$HOME/yogasto"
-   git init -b main
-   git add .nojekyll README.md INSTALACION-MOVIL.md index.html style.css app.js manifest.json sw.js icon.svg apple-touch-icon.png icon-192.png icon-512.png
-   git commit -m "Publicar YoGasto"
-   gh repo create yogasto --public --source=. --remote=origin --push
-   ```
-
-   Con GitHub Free, este paso crea un repositorio público. Conserva las copias JSON y los CSV de tus gastos fuera del repositorio. [Documentación de GitHub CLI](https://cli.github.com/manual/gh_repo_create)
-
-3. Activa GitHub Pages en la rama `main` y comprueba el enlace.
-
-   ```bash
-   yogasto_repo=$(gh repo view --json nameWithOwner --jq '.nameWithOwner')
-   gh api --method POST "repos/$yogasto_repo/pages" -f 'source[branch]=main' -f 'source[path]=/' --jq '.html_url'
-   gh api "repos/$yogasto_repo/pages" --jq '{estado: .status, enlace: .html_url}'
-   ```
-
-   Cuando el estado sea `built`, abre el enlace HTTPS. También puedes activar Pages desde **Settings → Pages → Deploy from a branch → main → /(root) → Save**. [Configuración de GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)
-
-## Instalar en iPhone
-
-Sigue la [guía de instalación para iPhone y Android](INSTALACION-MOVIL.md).
-
-Para publicar cambios, incrementa la versión de caché de `sw.js` y sube los archivos modificados a `main`. La versión nueva se activa al cerrar las pestañas o ventanas anteriores de YoGasto.
+Los gastos se guardan en el dispositivo. Tras abrir YoGasto con conexión por primera vez, puedes seguir usándolo sin cobertura. Desde **Ajustes** puedes exportar el historial a **CSV** o descargar una **copia JSON** para trasladar tus gastos y ajustes a otro móvil. Al restaurar una copia, se sustituyen los datos de YoGasto en el dispositivo de destino.
