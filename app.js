@@ -16,6 +16,7 @@ const categories = [
 ];
 // The first five indices are part of existing local data and backups.
 const quickCategoryCount = 5;
+const otherCategory = 4;
 const defaults = {
   version: 1, limit: 10000, currency: '€', expenses: [],
   shortcuts: [
@@ -218,6 +219,7 @@ function categoryOptions(select, start = 0, emptyLabel) {
 
 function selectCategory(index) {
   selected = index;
+  $('expense-name-field').hidden = selected !== otherCategory;
   Array.from($('categories').children).forEach((item, i) =>
     item.setAttribute('aria-pressed', i === selected));
   $('more-categories').value = selected >= quickCategoryCount ? String(selected) : '';
@@ -237,7 +239,7 @@ $('add').addEventListener('click', () => {
   const cents = centsOf(input);
   if (!cents) return notify('Introduce un importe mayor que cero.');
   const { icon, label } = categories[selected];
-  const name = $('expense-name').value.trim() || label;
+  const name = selected === otherCategory ? $('expense-name').value.trim() || label : label;
   if (addExpense({ icon, name, cents, category: selected })) {
     input = '';
     $('expense-name').value = '';

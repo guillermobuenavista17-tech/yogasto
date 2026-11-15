@@ -7,7 +7,7 @@ YoGasto es una app para apuntar pequeños gastos diarios y ver cuánto suman a f
 ## Registra un gasto
 
 - **Gastos habituales.** Toca Café, Desayuno, Bus/Metro o Refresco para registrar al instante su importe. Si te equivocas, tienes cuatro segundos para pulsar **Deshacer**.
-- **Otros gastos.** Introduce el importe con el teclado de la app, elige una categoría y añade un nombre si quieres, por ejemplo «Regalo para Ana». Pulsa **Añadir gasto** para guardarlo. Puedes usar un nombre en **Otro** o en cualquier categoría. En **Más categorías** encontrarás opciones como Supermercado, Salud, Regalos y Suscripciones.
+- **Otros gastos.** Introduce el importe con el teclado de la app, elige una categoría y pulsa **Añadir gasto**. Si eliges **Otro**, aparece un campo opcional para escribir qué fue, por ejemplo «Regalo para Ana». En **Más categorías** encontrarás opciones como Supermercado, Salud, Regalos y Suscripciones.
 
 ## Consulta tu presupuesto e historial
 

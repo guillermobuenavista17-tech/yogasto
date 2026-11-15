@@ -53,9 +53,9 @@ h2 { font-size:18px; letter-spacing:-.025em; }
 .categories button { background:transparent; color:#e0e8dc; min-height:48px; border:1px solid transparent; border-radius:9px; padding:3px 1px; font-size:10px; }
 .categories button span { display:block; font-size:17px; margin-bottom:2px; }
 .categories button[aria-pressed="true"] { background:#375e4d; border-color:#90a966; color:#fff; }
-.entry-fields,.history-filters { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
-.entry-fields { margin-bottom:10px; }
-.entry-fields label { display:block; color:#fff; }
+.history-filters { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+.entry-fields { display:flex; gap:8px; margin-bottom:10px; }
+.entry-fields label { display:block; flex:1; min-width:0; color:#fff; }
 .entry-fields label span { color:#d5e2d8; font-size:11px; }
 .entry-fields input,.entry-fields select { display:block; margin-top:4px; font-size:16px; }
 .history-filters { margin-top:12px; max-width:520px; }
