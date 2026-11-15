@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f3f0e8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#181b1e" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="YoGasto">
+<title>YoGasto</title>
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="stylesheet" href="./style.css">
+<script src="./app.js" defer></script>
+</head>
+<body>
+<header class="masthead">
+  <a class="brand" href="#registro"><img src="./icon.svg" alt="" width="35" height="35">YoGasto<span>.</span></a>
+  <span class="mast-date" id="today"></span>
+</header>
+<main>
+  <section id="registro" aria-label="Registro">
+    <div class="overview">
+      <article class="receipt">
+        <div class="receipt-head"><span>RESUMEN MENSUAL</span><span id="month"></span></div>
+        <h1>Gastado este mes</h1>
+        <div class="total" id="total">0,00 €</div>
+        <div class="budget-label"><span id="budget-label"></span><span id="percent"></span></div>
+        <div class="track" id="progress" role="progressbar" aria-label="Presupuesto utilizado" aria-valuemin="0" aria-valuemax="100"><span></span></div>
+        <div class="receipt-foot"><span id="remaining"></span><span class="status" id="status"></span></div>
+      </article>
+      <div class="quick-section">
+        <div class="section-head"><h2>Gastos habituales</h2><a href="#ajustes" id="edit-shortcuts">Editar <span aria-hidden="true">↗</span></a></div>
+        <div id="shortcuts" class="shortcuts"></div>
+      </div>
+    </div>
+    <section class="entry" aria-labelledby="entry-title">
+      <div class="entry-head"><h2 id="entry-title">Nuevo gasto</h2><span aria-hidden="true">＋</span></div>
+      <output id="amount" aria-label="Importe">0,00 €</output>
+      <div id="categories" class="categories" role="group" aria-label="Categoría"></div>
+      <div class="keypad" id="keypad" role="group" aria-label="Teclado numérico"></div>
+      <button class="add" id="add" type="button">Añadir gasto <span aria-hidden="true">↗</span></button>
+    </section>
+  </section>
+  <section id="historial" hidden>
+    <div class="section-head"><h1>Historial</h1><input type="month" id="past-month" aria-label="Consultar otro mes"></div>
+    <div class="periods" id="periods" role="group" aria-label="Periodo">
+      <button data-period="today">Hoy</button><button data-period="week">Esta semana</button><button data-period="month" aria-pressed="true">Este mes</button>
+    </div>
+    <div class="history-grid">
+      <article class="panel"><h2>Por categoría</h2><p class="history-total" id="history-total"></p><div id="breakdown"></div></article>
+      <article class="panel"><h2>Movimientos</h2><div id="movements"></div></article>
+    </div>
+  </section>
+  <section id="ajustes" hidden>
+    <h1>Ajustes</h1>
+    <form id="settings-form" class="settings-grid">
+      <section class="panel"><h2>Presupuesto mensual</h2>
+        <div class="fields"><label>Límite<input id="limit" inputmode="decimal" required maxlength="10"></label>
+        <label>Moneda<select id="currency"><option>€</option><option>$</option><option>£</option><option>CHF</option><option>MXN</option><option>USD</option></select></label></div>
+        <section class="data"><h2>Mis datos</h2><div class="data-actions">
+          <button type="button" id="csv">Exportar CSV</button>
+          <button type="button" id="backup">Descargar copia JSON</button>
+          <button type="button" id="import">Importar copia JSON</button>
+          <input type="file" id="backup-file" accept=".json,application/json" hidden>
+        </div></section>
+      </section>
+      <section class="panel" id="shortcut-settings"><h2>Gastos habituales</h2><div id="shortcut-fields"></div>
+        <button class="save">Guardar ajustes</button>
+      </section>
+    </form>
+  </section>
+</main>
+<nav class="navigation" aria-label="Navegación principal">
+  <a href="#registro" aria-current="page"><span aria-hidden="true">⊞</span>Registro</a>
+  <a href="#historial"><span aria-hidden="true">≡</span>Historial</a>
+  <a href="#ajustes"><span aria-hidden="true">⚙</span>Ajustes</a>
+</nav>
+<aside class="toast" id="toast" hidden><span id="toast-text" role="status"></span><button id="toast-action" hidden></button></aside>
+<dialog id="import-dialog" aria-labelledby="import-title">
+  <form method="dialog">
+    <h2 id="import-title">¿Restaurar esta copia?</h2>
+    <p>La copia sustituirá los gastos y ajustes guardados en este dispositivo.</p>
+    <div class="data-actions"><button value="cancel" autofocus>Cancelar</button><button value="restore">Restaurar</button></div>
+  </form>
+</dialog>
+</body>
+</html>
